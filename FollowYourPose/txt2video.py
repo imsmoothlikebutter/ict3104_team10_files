@@ -51,6 +51,7 @@ def main(
     enable_xformers_memory_efficient_attention: bool = True,
     seed: Optional[int] = None,
     skeleton_path: Optional[str] = None,
+    save_path: Optional[str] = None,
 ):
     *_, config = inspect.getargvalues(inspect.currentframe())
 
@@ -171,7 +172,8 @@ def main(
             save_videos_grid(sample, f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif")
             samples.append(sample)
         samples = torch.concat(samples)
-        save_path = f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}.gif"
+        # save_path = f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}.gif"
+        save_path = save_path
         save_videos_grid(samples, save_path)
         logger.info(f"Saved samples to {save_path}")
 
@@ -181,5 +183,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str)
     parser.add_argument("--skeleton_path", type=str)
+    parser.add_argument("--save_path", type=str)
     args = parser.parse_args()
-    main(**OmegaConf.load(args.config), skeleton_path = args.skeleton_path)
+    main(**OmegaConf.load(args.config), skeleton_path = args.skeleton_path, save_path = args.save_path)
