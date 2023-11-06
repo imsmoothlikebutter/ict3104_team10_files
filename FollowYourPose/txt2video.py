@@ -32,6 +32,9 @@ from einops import rearrange
 import sys
 sys.path.append('FollowYourPose')
 
+import cv2
+import numpy as np
+
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.10.0.dev0")
 
@@ -162,18 +165,47 @@ def main(
         ddim_inv_latent = None
 
         from datetime import datetime
-   
+
         now = str(datetime.now())
-        # print(now)
         for idx, prompt in enumerate(validation_data.prompts):
-            sample = validation_pipeline(prompt, generator=generator, latents=ddim_inv_latent,
-                                        skeleton_path=skeleton_path,
-                                        **validation_data).videos
-            save_videos_grid(sample, f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif")
-            samples.append(sample)
-        samples = torch.concat(samples)
-        # save_path = f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}.gif"
-        save_path = save_path
+            pipeline_output = validation_pipeline(prompt, generator=generator, latents=ddim_inv_latent, skeleton_path=skeleton_path, **validation_data)
+
+            video = pipeline_output.videos
+            skeleton = pipeline_output.skeleton
+
+            # Create a list to store the modified frames
+            combined_video_frames = []
+
+            # Iterate over each frame in the video
+            for frame_index in range(video.shape[0]):
+                video_frame = video[frame_index].cpu().numpy()
+                skeleton_frame = skeleton[frame_index].cpu().numpy()
+
+                # Assuming skeleton_frame is a binary mask, you can overlay it on the video frame
+                combined_frame = cv2.addWeighted(video_frame, 0.5, skeleton_frame, 1, 0)
+
+                combined_video_frames.append(combined_frame)
+
+            # Combine the modified frames into a video
+            combined_video = np.array(combined_video_frames)
+
+            # Save the combined video with the skeleton
+            combined_video_save_path = f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.mp4"
+            frame_height, frame_width = combined_video[0].shape[:2]
+            frame_rate = 30  # You may need to adjust this based on your video frame rate
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            out = cv2.VideoWriter(combined_video_save_path, fourcc, frame_rate, (frame_width, frame_height))
+
+            for frame in combined_video:
+                out.write(frame)
+
+            out.release()
+
+            samples.append(torch.from_numpy(combined_video))
+
+        # Combine and save all generated videos
+        samples = torch.cat(samples)
+        save_path = save_path  # Specify the save path for the combined video
         save_videos_grid(samples, save_path)
         logger.info(f"Saved samples to {save_path}")
 

@@ -38,6 +38,10 @@ logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 @dataclass
 class FollowYourPosePipelineOutput(BaseOutput):
     videos: Union[torch.Tensor, np.ndarray]
+    
+class SuperImposedFollowYourPosePipelineOutput(BaseOutput):
+    videos: Union[torch.Tensor, np.ndarray]
+    skeleton: Union[torch.Tensor, np.ndarray]
 
 
 class FollowYourPosePipeline(DiffusionPipeline):
@@ -405,23 +409,24 @@ class FollowYourPosePipeline(DiffusionPipeline):
 
         # Post-processing
         video = self.decode_latents(latents)
-
+        skeleton, save_skeleton = self.get_skeleton(skeleton_path, video_length, frame_skeleton_stride)
+        
         # Convert to tensor
         if output_type == "tensor":
             video = torch.from_numpy(video)
+            # skeleton = torch.from_numpy(skeleton)
             video_skeleton = rearrange(save_skeleton, 'b t h w c -> b c t h w')
-            # video = torch.cat([video_skeleton,video],dim=-1)
-
+            
         if not return_dict:
-            return video
+            return video, skeleton
 
-        return FollowYourPosePipelineOutput(videos=video)
+        return SuperImposedFollowYourPosePipelineOutput(videos=video, skeleton=video_skeleton)
     
     
     @torch.no_grad()
     def get_skeleton(self,skeleton_path, video_length=None, frame_skeleton_stride=None):
         skeleton_start_end = list(range(0, video_length * frame_skeleton_stride, frame_skeleton_stride))
-        self_transform = transforms.Compose([transforms.Resize(512),
+        self_transform = transforms.Compose([transforms.Resize((512, 512)),
                                         transforms_video.CenterCropVideo(512)])
         
         vr_skeleton = decord.VideoReader(skeleton_path)
