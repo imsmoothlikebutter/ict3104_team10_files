@@ -313,6 +313,7 @@ class FollowYourPosePipeline(DiffusionPipeline):
         # scale the initial noise by the standard deviation required by the scheduler
         latents = latents * self.scheduler.init_noise_sigma
         return latents
+    
 
     @torch.no_grad()
     def __call__(

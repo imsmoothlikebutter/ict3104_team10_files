@@ -53,6 +53,7 @@ def main(
     mixed_precision: Optional[str] = "fp16",
     enable_xformers_memory_efficient_attention: bool = True,
     seed: Optional[int] = None,
+    selected_folder: Optional[str] = None,
     skeleton_path: Optional[str] = None,
     save_path: Optional[str] = None,
 ):
@@ -165,6 +166,7 @@ def main(
         ddim_inv_latent = None
 
         from datetime import datetime
+        selected_folder = selected_folder
 
         now = str(datetime.now())
         for idx, prompt in enumerate(validation_data.prompts):
@@ -190,7 +192,7 @@ def main(
             combined_video = np.array(combined_video_frames)
 
             # Save the combined video with the skeleton
-            combined_video_save_path = f"{output_dir}/inference/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.mp4"
+            combined_video_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.mp4"
             frame_height, frame_width = combined_video[0].shape[:2]
             frame_rate = 30  # You may need to adjust this based on your video frame rate
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -203,18 +205,27 @@ def main(
 
             samples.append(torch.from_numpy(combined_video))
 
+        # Save the video and skeleton (you can customize the saving logic)
+        video_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif"
+        skeleton_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_skeleton.gif"
+        combined_video_save_path_gif = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.gif"
         # Combine and save all generated videos
         samples = torch.cat(samples)
-        save_path = save_path  # Specify the save path for the combined video
-        save_videos_grid(samples, save_path)
-        logger.info(f"Saved samples to {save_path}")
-
+        save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}.gif"
+        save_path_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}_super_imposed.gif"  # Specify the save path for the combined video
+        save_videos_grid(video, video_save_path)
+        save_videos_grid(skeleton, skeleton_save_path)
+        save_videos_grid(samples, combined_video_save_path_gif)
+        save_videos_grid(video, save_path)
+        save_videos_grid(samples, save_path_super_imposed)
+        logger.info(f"Saved samples to {save_path_super_imposed}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str)
+    parser.add_argument("--selected_folder", type=str)
     parser.add_argument("--skeleton_path", type=str)
     parser.add_argument("--save_path", type=str)
     args = parser.parse_args()
-    main(**OmegaConf.load(args.config), skeleton_path = args.skeleton_path, save_path = args.save_path)
+    main(**OmegaConf.load(args.config), skeleton_path = args.skeleton_path, save_path = args.save_path, selected_folder = args.selected_folder)
