@@ -1,0 +1,11 @@
+VideoName,Subject,Scene,CameraSetup,CameraAngle,Duration,Uploaded,Split
+Co_S1K1_fC6.avi,S1,Kitchen1,fixed,C6,0:00:59,yes,train
+Dr_S1D1_fC2.avi,S1,Dining1,fixed,C2,0:00:26,yes,train
+Ea_S1D1_fC1.avi,S1,Dining1,fixed,C1,0:00:40,yes,train
+GS_S1D1_fC1.avi,S1,Dining1,fixed,C1,0:00:24,yes,train
+RB_S1D2_fC13.avi,S1,Dining2,fixed,C13,0:00:30,yes,train
+TV_S3L2_m4.avi,S3,Living2,moving,4,0:02:00,yes,train
+UC_S1K2_fC18.avi,S1,Kitchen2,fixed,C18,0:00:30,yes,train
+UP_S6D1_m5.avi,S6,Dining1,moving,5,0:01:52,yes,train
+UT_S2D1_m4.avi,S2,Dining1,moving,4,0:00:40,yes,train
+Wa_S3D1_fC2.avi,S3,Dining1,fixed,C2,0:02:00,yes,train

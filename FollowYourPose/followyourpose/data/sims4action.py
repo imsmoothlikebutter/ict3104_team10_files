@@ -46,7 +46,7 @@ class Sims4ActionDataset(Dataset):
         print('dataset rank:', global_rank, ' / ', all_rank, ' ')
         
         self.data_dir = "/content/sims4action_dataset/"
-        self.csv_path = "/content/sims4action_dataset/SimsSplitsCompleteVideos.csv"
+        self.csv_path = "/content/sims4action_dataset/sims4action-test-v1-10-videos.csv"
         self.meta_path = os.path.join(self.data_dir, self.csv_path)
 
         spatial_transform = "resize_center_crop"
