@@ -17,7 +17,7 @@ from collections import OrderedDict
 import time
 import csv
 
-class CharadesDataset(Dataset):
+class Sims4ActionDataset(Dataset):
     """
     Charades Dataset.
     Assumes Charades data is structured as follows.
@@ -25,7 +25,7 @@ class CharadesDataset(Dataset):
         videos/
             video-id.mp4
             ...
-        SimsSplitsCompleteVideos.csv.csv
+        SimsSplitsCompleteVideos.csv
     """
     def __init__(self,
                 width=512,

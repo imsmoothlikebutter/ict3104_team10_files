@@ -208,20 +208,20 @@ def main(
             samplesraw.append(video)
 
         # Save the video and skeleton (you can customize the saving logic)
-        video_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif"
-        skeleton_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_skeleton.gif"
-        combined_video_save_path_gif = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_without_skeleton.gif"
-        combined_video_save_path_gif_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.gif"
+        # video_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif"
+        # skeleton_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_skeleton.gif"
+        # combined_video_save_path_gif = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_without_skeleton.gif"
+        # combined_video_save_path_gif_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.gif"
         # Combine and save all generated videos
         samples = torch.cat(samples)
         samplesraw = torch.cat(samplesraw)
-        save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}.gif"
+        # save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}.gif"
         save_path_without_skeleton = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}_combined.gif"
         save_path_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}_super_imposed.gif"  # Specify the save path for the combined video
-        save_videos_grid(video, video_save_path)
-        save_videos_grid(skeleton, skeleton_save_path)
-        save_videos_grid(samplesraw, combined_video_save_path_gif)
-        save_videos_grid(samples, combined_video_save_path_gif_super_imposed)
+        # save_videos_grid(video, video_save_path)
+        # save_videos_grid(skeleton, skeleton_save_path)
+        # save_videos_grid(samplesraw, combined_video_save_path_gif)
+        # save_videos_grid(samples, combined_video_save_path_gif_super_imposed)
         # save_videos_grid(video, save_path)
         save_videos_grid(samplesraw, save_path_without_skeleton)
         save_videos_grid(samples, save_path_super_imposed)
