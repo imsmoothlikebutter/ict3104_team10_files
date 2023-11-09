@@ -123,7 +123,8 @@ class Sims4ActionDataset(Dataset):
             print(self.metadata)
 
     def _get_video_path(self, sample):
-        video_id = sample["id"]
+        video_id_with_extension = sample["video_name"]
+        video_id = os.path.splitext(video_id_with_extension)
         video_path = os.path.join(self.data_dir, 'videos', f'{video_id}.mp4')
         return video_path
     
