@@ -160,6 +160,7 @@ def main(
                 
     if accelerator.is_main_process:
         samples = []
+        samplesraw = []
         generator = torch.Generator(device=accelerator.device)
         generator.manual_seed(seed)
 
@@ -192,7 +193,7 @@ def main(
             combined_video = np.array(combined_video_frames)
 
             # Save the combined video with the skeleton
-            combined_video_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.mp4"
+            combined_video_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.mp4"
             frame_height, frame_width = combined_video[0].shape[:2]
             frame_rate = 30  # You may need to adjust this based on your video frame rate
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -204,19 +205,25 @@ def main(
             out.release()
 
             samples.append(torch.from_numpy(combined_video))
+            samplesraw.append(video)
 
         # Save the video and skeleton (you can customize the saving logic)
-        video_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif"
-        skeleton_save_path = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_skeleton.gif"
-        combined_video_save_path_gif = f"{output_dir}/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.gif"
+        video_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}.gif"
+        skeleton_save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_skeleton.gif"
+        combined_video_save_path_gif = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_without_skeleton.gif"
+        combined_video_save_path_gif_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}/sample-{global_step}-{str(seed)}-{now}/{prompt}_with_skeleton.gif"
         # Combine and save all generated videos
         samples = torch.cat(samples)
+        samplesraw = torch.cat(samplesraw)
         save_path = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}.gif"
+        save_path_without_skeleton = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}_combined.gif"
         save_path_super_imposed = f"/content/FollowYourPose/checkpoints/inference/{selected_folder}_result/sample-{global_step}-{str(seed)}-{now}/{selected_folder}_super_imposed.gif"  # Specify the save path for the combined video
         save_videos_grid(video, video_save_path)
         save_videos_grid(skeleton, skeleton_save_path)
-        save_videos_grid(samples, combined_video_save_path_gif)
-        save_videos_grid(video, save_path)
+        save_videos_grid(samplesraw, combined_video_save_path_gif)
+        save_videos_grid(samples, combined_video_save_path_gif_super_imposed)
+        # save_videos_grid(video, save_path)
+        save_videos_grid(samplesraw, save_path_without_skeleton)
         save_videos_grid(samples, save_path_super_imposed)
         logger.info(f"Saved samples to {save_path_super_imposed}")
 
