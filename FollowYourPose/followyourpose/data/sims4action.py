@@ -223,13 +223,13 @@ class Sims4ActionDataset(Dataset):
         else:
             cap_idx = big_cap_idx
         # print(middle_idx, small_cap_idx, big_cap_idx,cap_idx)
-        caption = sample["script"][int(cap_idx // 64)]
+        # caption = sample["video_name"][int(cap_idx // 64)]
 
         frames = frames.permute(1, 0, 2, 3)
         skeleton_final = torch.zeros_like(frames).byte()
         frames = frames / 127.5 - 1.0
         skeleton_final = skeleton_final / 127.5 - 1.0
-        example = {"pixel_values": frames, "sentence": caption, "pose": skeleton_final}
+        example = {"pixel_values": frames, "sentence": "", "pose": skeleton_final}
 
         return example
 
